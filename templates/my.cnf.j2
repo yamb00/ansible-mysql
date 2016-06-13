@@ -1,0 +1,94 @@
+[client]
+
+{% for param, value in mysql_mycnf_client.iteritems() %}
+{% if value %}
+{{ param }} = {{ value }}
+{% else %}
+{{ param }}
+{% endif %}
+{% endfor %}
+
+[mysql]
+
+{% for param, value in mysql_mycnf_mysql.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+[mysqldump]
+
+{% for param, value in mysql_mycnf_mysqldump.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+[mysqladmin]
+
+{% for param, value in mysql_mycnf_mysqladmin.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+[mysqld]
+
+#Connection
+{% for param, value in mysql_mycnf_mysqld_connection.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+#Engines
+{% if mysql_mycnf_mysqld_engines is defined %}
+{% for engine in mysql_mycnf_mysqld_engines %}
+{{ engine }}
+{% endfor %}
+{% endif %}
+
+#Cache
+{% for param, value in mysql_mycnf_mysqld_cache.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+#Log
+{% for param, value in mysql_mycnf_mysqld_log.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+#Replication
+{% for param, value in mysql_mycnf_mysqld_rep.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+#Security
+{% if mysql_mycnf_mysqld_security is defined %}
+{% for param, value in mysql_mycnf_mysqld_security.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+{% endif %}
+#MyISAM
+{% if mysql_mycnf_mysqld_wsrep is not defined %}
+{% for param, value in mysql_mycnf_mysqld_myisam.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+{% endif %}
+
+#Memory
+{% for param, value in mysql_mycnf_mysqld_memory.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+#Binlog
+{% if mysql_mycnf_mysqld_binlog is defined %}
+{% for param, value in mysql_mycnf_mysqld_binlog.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+{% endif %}
+
+#InnoDB
+{% for param, value in mysql_mycnf_mysqld_innodb.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+
+#Galera Cluster
+#wsrep
+{% if mysql_mycnf_mysqld_wsrep is defined %}
+{% for param, value in mysql_mycnf_mysqld_wsrep.iteritems() %}
+{{ param }} = {{ value }}
+{% endfor %}
+{% endif %}

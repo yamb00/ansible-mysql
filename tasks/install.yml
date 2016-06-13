@@ -1,0 +1,74 @@
+---
+- name: mysql-server | install pkgs
+  apt: >
+      name={{item}}
+      state=present
+  with_items:
+      - libaio1
+      - libaio-dev
+
+- stat: path='{{ mysql_path }}/{{ mysql_version }}'
+  register: mysql_installed
+
+- name: mysql-server | unpack tarball
+  unarchive: >
+    src='{{ mysql_tarball_url }}'
+    dest='{{ mysql_path }}'
+    copy=no
+  when: mysql_installed.stat.exists == false
+
+- name: mysql-server | set symlink
+  file: >
+      src='{{ mysql_path }}/{{ mysql_version }}'
+      dest='{{ mysql_basedir }}'
+      state=link
+
+- name: mysql-server | get binaries
+  command: ls {{ mysql_path }}/{{ mysql_version }}/bin/
+  register: binaries
+
+- name: mysql-server | set /usr/local/bin symlinks
+  file: >
+      src='{{ mysql_basedir}}/bin/{{ item }}'
+      dest='/usr/local/bin/{{ item }}'
+      state=link
+  with_items: '{{ binaries.stdout_lines }}'
+
+- name: mysql-server | set /usr/bin symlinks
+  file : >
+      src='{{ mysql_basedir }}/bin/{{ item }}'
+      dest='/usr/bin/{{ item }}'
+      state=link
+  with_items: '{{ binaries.stdout_lines }}'
+
+- name: mysql-server | init script
+  command: cp {{ mysql_basedir }}/support-files/mysql.server /etc/init.d/
+
+- name: mysql-server | set start on boot
+  service: >
+      name=mysql.server
+      enabled=yes
+
+- name: mysql-server | create group mysql
+  group: >
+      name=mysql
+      state=present
+
+- name: mysql-server | create user mysql
+  user: >
+      name=mysql
+      group=mysql
+      state=present
+
+- name: mysql-server | create folder
+  file: >
+      path={{ item }}
+      state=directory
+      owner=mysql
+      recurse=yes
+  with_items:
+      - '{{ mysql_datadir       }}'
+      - '{{ mysql_tmpdir        }}'
+      - '{{ mysql_logdir        }}'
+      - '{{ mysql_binlogdir     }}'
+      - '{{ mysql_relay_logdir  }}'

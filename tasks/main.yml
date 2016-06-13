@@ -1,0 +1,4 @@
+---
+- { include: install.yml    ,   tags: mysql-install       }
+- { include: config.yml     ,   tags: mysql-config        }
+- { include: utilities.yml  ,   tags: mysql-utilities     }

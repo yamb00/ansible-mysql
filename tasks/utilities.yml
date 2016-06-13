@@ -1,0 +1,7 @@
+---
+- name: get mysql-utilities
+  apt: >
+    deb={{ item }}    
+  with_items:
+    - "{{ mysql_connector_python_url }}"
+    - "{{ mysql_utilities_url }}"

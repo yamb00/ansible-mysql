@@ -1,0 +1,42 @@
+---
+- name: mysql-server | set my.cnf
+  template: >
+      src=my.cnf.j2
+      dest='{{ mysql_my_cnf }}'
+      mode='0665'
+      owner=mysql
+
+- name: mysql-server | create /etc/mysql      
+  file: >
+      path=/etc/mysql
+      state=directory
+
+- name: mysql-server | set my.cnf symlink
+  file: >
+      src='{{ mysql_my_cnf }}'
+      dest='{{item}}'
+      state=link
+  with_items:
+      - '/etc/my.cnf'
+      - '/etc/mysql/my.cnf'
+
+- shell: ls {{ mysql_datadir }}
+  register: items_mysql_datadir
+
+- name: mysql-server | init DB
+  shell: scripts/mysql_install_db --basedir={{ mysql_basedir }} --defaults-file=/etc/mysql/my.cnf
+  args:
+      chdir: '{{ mysql_basedir }}'
+  when: items_mysql_datadir.stdout_lines | length == 0
+
+- name: mysql-server | set owner
+  file: >
+      path={{ mysql_root }}
+      state=directory
+      owner=mysql
+      recurse=yes
+
+- name: start mysql
+  service: >
+    name=mysql.server
+    state=started
