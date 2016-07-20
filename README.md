@@ -10,8 +10,8 @@ Currently it's been developed for, and tested on Ubuntu. It is assumed to work o
 
 ###### Default Variables
 
-- 'mysql_init_db' - flag to run init db
-- 'mysql_tarball_url' - url to mysql tarball
+- 'mysql_basedir' -	path to install binary
+- 'mysql_root' - path of mysql datadir and everything else
 
 - 'mysql_utilities_url' - mysql utils paket
 - 'mysql_connector_python_url' - mysql python connector paket
